@@ -94,7 +94,7 @@ export class ResolvedReflectiveFactory {
     /**
      * From which provider this factory has been made.
      */
-    public provider: Object
+    public providerRef: Object
   ) {}
 }
 
@@ -164,7 +164,7 @@ export function mergeResolvedReflectiveProviders(
       if (provider.multiProvider) {
         for (let j = 0; j < provider.resolvedFactories.length; j++) {
           const factory = provider.resolvedFactories[j];
-          let indexOfDuplicate = existing.resolvedFactories.findIndex(fac => fac.provider === factory.provider);
+          let indexOfDuplicate = existing.resolvedFactories.findIndex(fac => fac.providerRef === factory.providerRef);
           if (indexOfDuplicate > -1) existing.resolvedFactories.splice(indexOfDuplicate, 1);
           existing.resolvedFactories.push(factory);
         }
