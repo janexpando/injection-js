@@ -90,7 +90,11 @@ export class ResolvedReflectiveFactory {
     /**
      * Arguments (dependencies) to the `factory` function.
      */
-    public dependencies: ReflectiveDependency[]
+    public dependencies: ReflectiveDependency[],
+    /**
+     * From which provider this factory has been made.
+     */
+    public provider: Object
   ) {}
 }
 
@@ -114,7 +118,7 @@ function resolveReflectiveFactory(provider: NormalizedProvider): ResolvedReflect
     factoryFn = () => provider.useValue;
     resolvedDeps = _EMPTY_LIST;
   }
-  return new ResolvedReflectiveFactory(factoryFn, resolvedDeps);
+  return new ResolvedReflectiveFactory(factoryFn, resolvedDeps, provider);
 }
 
 /**
@@ -159,7 +163,10 @@ export function mergeResolvedReflectiveProviders(
       }
       if (provider.multiProvider) {
         for (let j = 0; j < provider.resolvedFactories.length; j++) {
-          existing.resolvedFactories.push(provider.resolvedFactories[j]);
+          const factory = provider.resolvedFactories[j];
+          let indexOfDuplicate = existing.resolvedFactories.findIndex(fac => fac.provider === factory.provider);
+          if (indexOfDuplicate > -1) existing.resolvedFactories.splice(indexOfDuplicate, 1);
+          existing.resolvedFactories.push(factory);
         }
       } else {
         normalizedProvidersMap.set(provider.key.id, provider);

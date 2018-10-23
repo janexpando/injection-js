@@ -76,6 +76,9 @@ class CyclicEngine {
   constructor(car: Car) {}
 }
 
+@Injectable()
+class HttpMiddleware {}
+
 class NoAnnotations {
   constructor(secretDependency: any) {}
 }
@@ -211,6 +214,12 @@ describe(`injector`, () => {
     expect(cars.length).toEqual(2);
     expect(cars[0] instanceof SportsCar).toBeTruthy();
     expect(cars[1] instanceof CarWithOptionalEngine).toBeTruthy();
+  });
+  it('should inject provider only once', function() {
+    const controllerModule = [{ provide: 'middleware', multi: true, useClass: HttpMiddleware }];
+    const injector = createInjector([controllerModule, controllerModule]);
+    let middlewares: any[] = injector.get('middleware');
+    expect(middlewares.length).toBe(1);
   });
 
   it('should support multiProviders that are created using useExisting', () => {
